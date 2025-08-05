@@ -39,7 +39,7 @@ st.markdown(
     f"""
     <div style="display: flex; align-items: center; gap: 20px; padding: 1rem 0;">
         <img src="data:image/jpeg;base64,{logo_base64}" style="height: 80px; width: auto;" />
-        <h1 style='font-size: 2.8rem; font-weight: 800; margin: 0; color: white;'>
+        <h1 style='font-size: 2.4rem; font-weight: 800; margin: 0; color: white;'>
             SDG Dashboard: Gender Inequality & Economic Growth
         </h1>
     </div>
