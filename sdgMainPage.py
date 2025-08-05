@@ -10,6 +10,7 @@ warnings.filterwarnings("ignore")
 st.set_page_config(page_title="SDG Dashboard", layout="wide")
 
 # ------------- Load and Encode Logo -------------------
+@st.cache_resource
 def get_image_base64(img_path):
     img = Image.open(img_path)
     buffer = BytesIO()
@@ -18,6 +19,7 @@ def get_image_base64(img_path):
 
 logo_base64 = get_image_base64("sdg_logo.jpeg")
 
+@st.cache_resource
 def load_local_image_as_base64(path):
     with open(path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
