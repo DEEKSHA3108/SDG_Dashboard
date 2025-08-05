@@ -1,108 +1,3 @@
-# import streamlit as st
-# from PIL import Image
-# import base64
-# from io import BytesIO
-# import warnings
-
-# warnings.filterwarnings("ignore")
-
-# # Streamlit page config
-# st.set_page_config(page_title="SDG Dashboard", layout="wide")
-
-# # ------------- Load and Encode Logo -------------------
-# def get_image_base64(img_path):
-#     img = Image.open(img_path)
-#     buffer = BytesIO()
-#     img.save(buffer, format="JPEG")
-#     return base64.b64encode(buffer.getvalue()).decode()
-
-# logo_base64 = get_image_base64("sdg_logo.jpeg")
-
-
-
-# # ---------- Hide Sidebar Navigation (Optional) ----------
-# hide_streamlit_style = """
-#     <style>
-#     [data-testid="stSidebarNav"] {
-#         display: none;
-#     }
-#     </style>
-# """
-# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-# # ----------------------- Header -------------------------
-# col_logo, col_title = st.columns([1, 8])
-
-# # -------- Unified Header + Info Cards Container ---------
-# with st.container():
-#     st.markdown(
-#         f"""
-#         <div style="display: flex; align-items: center; justify-content: flex-start; gap: 20px; width: 100%; flex-wrap: wrap;">
-#             <img src="data:image/jpeg;base64,{logo_base64}" style="height: 100px; width: auto; object-fit: contain;" />
-#             <h1 style='font-size: 2.4vw; font-weight: 800; color: white; margin: 0; line-height: 1.2;'>
-#                 SDG Dashboard: Gender Inequality & Economic Growth
-#             </h1>
-#         </div>
-#         """,
-#         unsafe_allow_html=True
-#     )
-
-#     # Spacer
-#     st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
-
-#     # Info Cards Row
-#     col1, col2, col3 = st.columns(3)
-
-#     box_style = """
-#         <div style='background-color:#E0E0E0; padding: 1rem; border-radius: 15px;
-#         text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;'>
-#             <div style='font-size: 1.3vw; font-weight: bold; color: black;'>{}</div>
-#             <div style='font-size: 1vw; color: gray;'>{}</div>
-#         </div>
-#     """
-
-#     with col1:
-#         st.markdown(box_style.format("Goal 5 and Goal 8", "SDG Goals Involved"), unsafe_allow_html=True)
-#     with col2:
-#         st.markdown(box_style.format("India and Germany", "Countries Involved"), unsafe_allow_html=True)
-#     with col3:
-#         st.markdown(box_style.format("1995 to 2023", "Year Range"), unsafe_allow_html=True)
-
-# # Space after info cards
-# st.markdown("<div style='margin-top: 60px;'></div>", unsafe_allow_html=True)
-
-# # ------------------------- Sidebar Menu -----------------------
-# st.sidebar.title("Menu")
-# side_bar_menu = st.sidebar.selectbox(
-#     "",
-#     ["Introduction", "Data Gap Analysis", "EDA", "Forecasting Model"]
-# )
-
-# # ---------------- Dynamic Page Renderer ----------------------
-# try:
-#     with st.container():
-#         if side_bar_menu == "Introduction":
-#             import introduction
-#             introduction.render()
-
-#         elif side_bar_menu == "Data Gap Analysis":
-#             import dataGap
-#             dataGap.render()
-
-#         elif side_bar_menu == "EDA":
-#             import eda
-#             eda.render()
-
-#         elif side_bar_menu == "Forecasting Model":
-#             import forcastingModel
-#             forcastingModel.render()
-
-# except AttributeError as e:
-#     st.error(f"Error loading page: `{e}`\nMake sure the `{side_bar_menu}` module has a `render()` function.")
-# except ModuleNotFoundError as e:
-#     st.error(f"Missing module: `{e}`. Ensure the file `{e.name}.py` exists in your project folder.")
-
-
 import streamlit as st
 from PIL import Image
 import base64
@@ -144,7 +39,7 @@ st.markdown(
     f"""
     <div style="display: flex; align-items: center; gap: 20px; padding: 1rem 0;">
         <img src="data:image/jpeg;base64,{logo_base64}" style="height: 80px; width: auto;" />
-        <h1 style='font-size: 3.0rem; font-weight: 800; margin: 0; color: white;'>
+        <h1 style='font-size: 2.8rem; font-weight: 800; margin: 0; color: white;'>
             SDG Dashboard: Gender Inequality & Economic Growth
         </h1>
     </div>
