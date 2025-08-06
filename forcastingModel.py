@@ -207,12 +207,12 @@ def render():
         st.markdown("### Error Metrics for India and Germany")
 
         # Forecast + Metrics for India
-        _, y_test_india, preds_india, _, _, _, _, _ = hybrid_forecast_plotly(df, "India", forecast_horizon=5)
+        #_, y_test_india, preds_india, _, _, _, _, _ = hybrid_forecast_plotly(df, "India", forecast_horizon=5)
         rmse_india = np.sqrt(mean_squared_error(y_test_india, preds_india))
         mae_india = mean_absolute_error(y_test_india, preds_india)
 
         # Forecast + Metrics for Germany
-        _, y_test_ger, preds_ger, _, _, _, _, _ = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5)
+        #_, y_test_ger, preds_ger, _, _, _, _, _ = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5)
         rmse_ger = np.sqrt(mean_squared_error(y_test_ger, preds_ger))
         mae_ger = mean_absolute_error(y_test_ger, preds_ger)
 
@@ -225,11 +225,7 @@ def render():
 
         st.dataframe(metrics_df.set_index("Country").round(3))
 
-        # Plotly Interactive Bar Chart
-        import plotly.graph_objs as go
-
         fig = go.Figure()
-
         fig.add_trace(go.Bar(
             x=metrics_df["Country"],
             y=metrics_df["RMSE"],
