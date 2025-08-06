@@ -30,17 +30,19 @@ countries = ['IND', 'DEU']  #'CAN','ZAF']
 years = range(1995, 2024)
 
 @st.cache_data
-def load_world_bank_data():
+def load_from_api():
 # <---------------- Loading the data from world bank api ----------------------->
     # Fetch data from the world bank api 
     df = wb.data.DataFrame(indicators, economy=countries, time=years, labels=True)
     # Reset index
     df.reset_index(inplace=True)
-    # Save to CSV
-    df.to_csv('worldbank_extracted_data.csv', index=False)
+    df.to_csv('data.csv')
 
+@st.cache_data
+def load_world_bank_data():
 # <----------------------- Pre processing the data ----------------------------->
     # Replace YR from the column names
+    df = pd.read_csv('data.csv')
     df.columns = [int(i.replace('YR', '')) if 'YR' in i else i for i in df.columns]
     # Copying the df to a new variable df_new, for interchanging the rows and columns for handling the NaN values
     df_new = df.copy()
@@ -59,13 +61,14 @@ def load_world_bank_data():
         columns="series",
         values="Value"
     ).reset_index()
-
+    # Save to CSV
+    df_pivoted.to_csv('worldbank_extracted_data.csv', index=False)
     return df_pivoted
 
 # <----------------------- Cleaning the data ----------------------------->
 @st.cache_data
 def cleaned_data():
-    data = load_world_bank_data()
+    data = pd.read_csv('worldbank_extracted_data.csv')
     df_pivoted = data.copy()
     df_pivoted = df_pivoted.drop(columns = ['economy', 'FX.OWN.TOTL.FE.ZS' ,'FX.OWN.TOTL.MA.ZS', 'IC.FRM.FEMM.ZS', 'IC.FRM.FEMO.ZS',
                                        'SG.TIM.UWRK.FE', 'SG.TIM.UWRK.MA', 'SP.M15.2024.FE.ZS', 'SP.M18.2024.FE.ZS' ], axis = 1)
