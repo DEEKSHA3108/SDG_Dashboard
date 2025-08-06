@@ -224,11 +224,6 @@ def render():
         })
 
         st.dataframe(metrics_df.set_index("Country").round(3))
-        # Center the RMSE column
-        st.markdown(
-            df_metrics.style.set_properties(subset=["RMSE"], **{"text-align": "center"}).to_html(),
-            unsafe_allow_html=True
-        )
 
         fig = go.Figure()
         fig.add_trace(go.Bar(
