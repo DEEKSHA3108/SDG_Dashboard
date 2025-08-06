@@ -267,6 +267,6 @@ def cleaned_data():
     df_pivoted.to_csv('preprocessed_data.csv')
     return df_pivoted
 
-@@st.cache_resource
+@st.cache_resource
 def loading_data():
     df = pd.read_csv('preprocessed_data.csv')
