@@ -36,13 +36,13 @@ def load_from_api():
     df = wb.data.DataFrame(indicators, economy=countries, time=years, labels=True)
     # Reset index
     df.reset_index(inplace=True)
-    df.to_csv('data.csv')
+    return df
 
 @st.cache_data
 def load_world_bank_data():
 # <----------------------- Pre processing the data ----------------------------->
     # Replace YR from the column names
-    df = pd.read_csv('data.csv')
+    df = load_from_api()
     df.columns = [int(i.replace('YR', '')) if 'YR' in i else i for i in df.columns]
     # Copying the df to a new variable df_new, for interchanging the rows and columns for handling the NaN values
     df_new = df.copy()
@@ -62,13 +62,12 @@ def load_world_bank_data():
         values="Value"
     ).reset_index()
     # Save to CSV
-    df_pivoted.to_csv('worldbank_extracted_data.csv', index=False)
     return df_pivoted
 
 # <----------------------- Cleaning the data ----------------------------->
 @st.cache_data
 def cleaned_data():
-    data = pd.read_csv('worldbank_extracted_data.csv')
+    data = load_world_bank_data()
     df_pivoted = data.copy()
     df_pivoted = df_pivoted.drop(columns = ['economy', 'FX.OWN.TOTL.FE.ZS' ,'FX.OWN.TOTL.MA.ZS', 'IC.FRM.FEMM.ZS', 'IC.FRM.FEMO.ZS',
                                        'SG.TIM.UWRK.FE', 'SG.TIM.UWRK.MA', 'SP.M15.2024.FE.ZS', 'SP.M18.2024.FE.ZS' ], axis = 1)
@@ -263,10 +262,10 @@ def cleaned_data():
     "SP.ADO.TFRT": "Adolescent fertility rate (births per 1,000 women ages 15–19)",
     "SP.DYN.TFRT.IN": "Total fertility rate (births per woman)",
     }, inplace=True)
-
-    df_pivoted.to_csv('preprocessed_data.csv')
     return df_pivoted
 
+
 @st.cache_resource
-def loading_data():
-    df = pd.read_csv('preprocessed_data.csv')
+def loading_preprocessed_data():
+    df = cleaned_data()
+    return df
