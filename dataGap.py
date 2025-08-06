@@ -9,7 +9,6 @@ import chartDiscription as cd
 
 from dataLoading import load_world_bank_data  # Import the cached data function
 
-@st.cache_resource
 def render():
    # Load the processed data
     data = load_world_bank_data()
