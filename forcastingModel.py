@@ -141,7 +141,7 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=Tr
 
     return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
 
-
+@st.cache_resource
 def render():
     df = cleaned_data()
     df.columns = df.columns.str.strip()
