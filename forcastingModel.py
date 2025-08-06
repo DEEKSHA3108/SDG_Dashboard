@@ -11,7 +11,7 @@ import scipy.stats as stats
 import streamlit as st
 import chartDiscription as cd
 
-from dataLoading import cleaned_data  # Make sure this returns your cleaned DataFrame
+from dataLoading import loading_preprocessed_data  # Make sure this returns your cleaned DataFrame
 
 
 def create_lag_features(df, target='gdp_growth', lags=3):
@@ -142,12 +142,21 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=Tr
     return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
 
 @st.cache_resource
+def cached_forecast(df, country_name, forecast_horizon=10, show_legend=True):
+    return hybrid_forecast_plotly(df, country_name, forecast_horizon, show_legend)
+
+
+
 def render():
-    df = cleaned_data()
+    df = loading_preprocessed_data()
     df.columns = df.columns.str.strip()
 
-# <----------------- Radio buttons to toogle between graphs ----------------------->
     st.sidebar.subheader("Data Visualization")
+
+    # ✅ Cache both forecasts once
+    india_traces, y_test_india, preds_india, *_ = cached_forecast(df, "India", forecast_horizon=5, show_legend=True)
+    germany_traces, y_test_ger, preds_ger, *_ = cached_forecast(df, "Germany", forecast_horizon=5, show_legend=False)
+
     chart_type = st.sidebar.radio(
         "Choose a chart to visualize:",
         [
@@ -156,14 +165,8 @@ def render():
         ]
     )
 
-    # Get forecasting results for India (used in all diagnostic plots)
-    #india_traces, y_test, test_preds, residuals, forecast_vals, full_df, upper_ci, lower_ci = hybrid_forecast_plotly(df, "India", forecast_horizon=5, show_legend=True)
-    india_traces, _, _, _, _, _, _, _ = hybrid_forecast_plotly(df, "India", forecast_horizon=5, show_legend=True)
-
-# <--------------------- Graphs render with Radio Button ----------------------->
+    # ---------------- Forecasting Model Chart ----------------
     if chart_type == "Forcasting Model":
-        germany_traces, *_ = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5, show_legend=False)
-
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1,
                             subplot_titles=["India", "Germany"])
 
@@ -199,20 +202,16 @@ def render():
         st.plotly_chart(fig, use_container_width=True)
         cd.forcasting_description()
 
+    # ---------------- Error Metrics Table ----------------
     elif chart_type == "Error Metrics Table":
         st.markdown("### Error Metrics for India and Germany")
 
-        # Forecast + Metrics for India
-        _, y_test_india, preds_india, _, _, _, _, _ = hybrid_forecast_plotly(df, "India", forecast_horizon=5)
         rmse_india = np.sqrt(mean_squared_error(y_test_india, preds_india))
         mae_india = mean_absolute_error(y_test_india, preds_india)
 
-        # Forecast + Metrics for Germany
-        _, y_test_ger, preds_ger, _, _, _, _, _ = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5)
         rmse_ger = np.sqrt(mean_squared_error(y_test_ger, preds_ger))
         mae_ger = mean_absolute_error(y_test_ger, preds_ger)
 
-        # Metrics DataFrame
         metrics_df = pd.DataFrame({
             "Country": ["India", "Germany"],
             "RMSE": [rmse_india, rmse_ger],
@@ -221,11 +220,7 @@ def render():
 
         st.dataframe(metrics_df.set_index("Country").round(3))
 
-        # Plotly Interactive Bar Chart
-        import plotly.graph_objs as go
-
         fig = go.Figure()
-
         fig.add_trace(go.Bar(
             x=metrics_df["Country"],
             y=metrics_df["RMSE"],
@@ -234,7 +229,6 @@ def render():
             text=[f"{val:.2f}" for val in metrics_df["RMSE"]],
             textposition='outside'
         ))
-
         fig.add_trace(go.Bar(
             x=metrics_df["Country"],
             y=metrics_df["MAE"],
@@ -254,7 +248,5 @@ def render():
             legend=dict(orientation="h", y=-0.2, x=0.5, xanchor='center'),
             margin=dict(l=60, r=60, t=60, b=80)
         )
-
         st.plotly_chart(fig, use_container_width=True)
         cd.error_matrix_table_description()
-
