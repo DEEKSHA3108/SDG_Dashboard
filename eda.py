@@ -1,15 +1,14 @@
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots 
-from dataLoading import cleaned_data  # Import the cached data function
+from dataLoading import loading_preprocessed_data  # Import the cached data function
 import streamlit as st
 import matplotlib.pyplot as plt
 import chartDiscription as cd
 
-@st.cache_resource
 def render():
     # Load the processed data
-    data = cleaned_data()
+    data = loading_preprocessed_data()
     df = data.copy()
     df.columns = df.columns.str.strip()
 
