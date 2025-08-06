@@ -264,4 +264,9 @@ def cleaned_data():
     "SP.DYN.TFRT.IN": "Total fertility rate (births per woman)",
     }, inplace=True)
 
+    df_pivoted.to_csv('preprocessed_data.csv')
     return df_pivoted
+
+@@st.cache_resource
+def loading_data():
+    df = pd.read_csv('preprocessed_data.csv')
