@@ -206,12 +206,17 @@ def render():
     elif chart_type == "Error Metrics Table":
         st.markdown("### Error Metrics for India and Germany")
 
+        # Forecast + Metrics for India
+        _, y_test_india, preds_india, _, _, _, _, _ = hybrid_forecast_plotly(df, "India", forecast_horizon=5)
         rmse_india = np.sqrt(mean_squared_error(y_test_india, preds_india))
         mae_india = mean_absolute_error(y_test_india, preds_india)
 
+        # Forecast + Metrics for Germany
+        _, y_test_ger, preds_ger, _, _, _, _, _ = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5)
         rmse_ger = np.sqrt(mean_squared_error(y_test_ger, preds_ger))
         mae_ger = mean_absolute_error(y_test_ger, preds_ger)
 
+        # Metrics DataFrame
         metrics_df = pd.DataFrame({
             "Country": ["India", "Germany"],
             "RMSE": [rmse_india, rmse_ger],
@@ -220,7 +225,11 @@ def render():
 
         st.dataframe(metrics_df.set_index("Country").round(3))
 
+        # Plotly Interactive Bar Chart
+        import plotly.graph_objs as go
+
         fig = go.Figure()
+
         fig.add_trace(go.Bar(
             x=metrics_df["Country"],
             y=metrics_df["RMSE"],
@@ -229,6 +238,7 @@ def render():
             text=[f"{val:.2f}" for val in metrics_df["RMSE"]],
             textposition='outside'
         ))
+
         fig.add_trace(go.Bar(
             x=metrics_df["Country"],
             y=metrics_df["MAE"],
@@ -248,5 +258,6 @@ def render():
             legend=dict(orientation="h", y=-0.2, x=0.5, xanchor='center'),
             margin=dict(l=60, r=60, t=60, b=80)
         )
+
         st.plotly_chart(fig, use_container_width=True)
         cd.error_matrix_table_description()
