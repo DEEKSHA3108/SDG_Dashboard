@@ -234,7 +234,6 @@ def cleaned_data():
         df_pivoted['SL.TLF.CACT.FE.ZS'] -
         df_pivoted['SL.UEM.TOTL.FE.ZS']
     )
-
     # <== Renaming the column ===>
     df_pivoted = df_pivoted.rename({'NY.GDP.PCAP.KD.ZG': 'gdp_per_capita_growth', 
                   'NY.GDP.MKTP.KD.ZG' : 'gdp_growth'}, axis = 1)
