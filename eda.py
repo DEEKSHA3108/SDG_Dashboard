@@ -6,6 +6,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import chartDiscription as cd
 
+@st.cache_resource
 def render():
     # Load the processed data
     data = cleaned_data()
