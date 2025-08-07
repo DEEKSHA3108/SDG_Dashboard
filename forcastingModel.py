@@ -13,13 +13,11 @@ import chartDiscription as cd
 
 from dataLoading import loading_preprocessed_data  # Make sure this returns your cleaned DataFrame
 
-
 def create_lag_features(df, target='gdp_growth', lags=3):
     for lag in range(1, lags + 1):
         df[f'{target}_lag{lag}'] = df[target].shift(lag)
     df['year_idx'] = df['Year'] - df['Year'].min()
     return df
-
 
 def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=True):
     target = 'gdp_growth'
@@ -142,20 +140,26 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=Tr
     return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
 
 @st.cache_resource
-def cached_forecast(df, country_name, forecast_horizon=10, show_legend=True):
-    return hybrid_forecast_plotly(df, country_name, forecast_horizon, show_legend)
+def load_data_and_forecasts():
 
-
-
-def render():
     df = loading_preprocessed_data()
     df.columns = df.columns.str.strip()
 
-    st.sidebar.subheader("Data Visualization")
+    forecasts = {}
+    for country in ["India", "Germany"]:
+        forecasts[country] = hybrid_forecast_plotly(df, country, forecast_horizon=5, show_legend=(country=="India"))
+    return df, forecasts
 
-    # ✅ Cache both forecasts once
-    india_traces, y_test_india, preds_india, *_ = cached_forecast(df, "India", forecast_horizon=5, show_legend=True)
-    germany_traces, y_test_ger, preds_ger, *_ = cached_forecast(df, "Germany", forecast_horizon=5, show_legend=False)
+
+def render():
+    df, forecasts = load_data_and_forecasts()
+    india_traces, y_test_india, preds_india, *_ = forecasts["India"]
+    germany_traces, y_test_ger, preds_ger, *_ = forecasts["Germany"]
+
+    #df = loading_preprocessed_data()
+    df.columns = df.columns.str.strip()
+
+    st.sidebar.subheader("Data Visualization")
 
     chart_type = st.sidebar.radio(
         "Choose a chart to visualize:",
