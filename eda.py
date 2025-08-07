@@ -415,7 +415,7 @@ def render():
             fill="tozeroy",
             fillcolor="rgba(0, 102, 204, 0.3)",
             hoverinfo="x+y"
-            ), row=row, col=1, secondary_y=False)
+            ), row=row_idx, col=1, secondary_y=False)
 
             # Female feature (red)
             fig.add_trace(go.Scatter(
@@ -536,7 +536,7 @@ def render():
             fill="tozeroy",
             fillcolor="rgba(0, 102, 204, 0.3)",
             hoverinfo="x+y"
-            ), row=row, col=1, secondary_y=False)
+            ), row=row_idx, col=1, secondary_y=False)
 
             # Female (red)
             fig.add_trace(go.Scatter(
@@ -661,7 +661,7 @@ def render():
             fill="tozeroy",
             fillcolor="rgba(0, 102, 204, 0.3)",
             hoverinfo="x+y"
-            ), row=row, col=1, secondary_y=False)
+            ), row=row_idx, col=1, secondary_y=False)
 
             # Initial fertility feature trace (red)
             col = fertility_features[initial_feature_label]
@@ -777,7 +777,7 @@ def render():
             fill="tozeroy",
             fillcolor="rgba(0, 102, 204, 0.3)",
             hoverinfo="x+y"
-            ), row=row, col=1, secondary_y=False)
+            ), row=row_idx, col=1, secondary_y=False)
 
             # Well-being indicator trace (red)
             fig.add_trace(go.Scatter(
