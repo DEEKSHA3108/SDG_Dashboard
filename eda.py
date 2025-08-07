@@ -396,14 +396,26 @@ def render():
             df_country.sort_values("Year", inplace=True)
             df_country.reset_index(drop=True, inplace=True)
 
-            # GDP Growth (blue)
+            # # GDP Growth (blue)
+            # fig.add_trace(go.Scatter(
+            #     x=df_country["Year"],
+            #     y=df_country["gdp_growth"],
+            #     mode='lines+markers',
+            #     name=f"{country} - GDP Growth (%)",
+            #     line=dict(color="blue")
+            # ), row=row_idx, col=1, secondary_y=False)
+
+            # GDP growth
             fig.add_trace(go.Scatter(
-                x=df_country["Year"],
-                y=df_country["gdp_growth"],
-                mode='lines+markers',
-                name=f"{country} - GDP Growth (%)",
-                line=dict(color="blue")
-            ), row=row_idx, col=1, secondary_y=False)
+            x=df_country["Year"],
+            y=df_country["gdp_growth"],
+            mode='lines',
+            name=f"{country}: GDP Growth (%)",
+            line=dict(color="rgba(0, 102, 204, 1)", width=2),
+            fill="tozeroy",
+            fillcolor="rgba(0, 102, 204, 0.3)",
+            hoverinfo="x+y"
+            ), row=row, col=1, secondary_y=False)
 
             # Female feature (red)
             fig.add_trace(go.Scatter(
@@ -505,15 +517,26 @@ def render():
             df_country = df_filtered[df_filtered["Country"] == country]
             row_idx = i + 1
 
-            # GDP line (primary y-axis)
+            # # GDP line (primary y-axis)
+            # fig.add_trace(go.Scatter(
+            #     x=df_country["Year"],
+            #     y=df_country["gdp_growth"],
+            #     mode='lines+markers',
+            #     name=f"{country}: GDP Growth (%)",
+            #     line=dict(color="blue"),
+            #     showlegend=(i == 0)
+            # ), row=row_idx, col=1, secondary_y=False)
+            # GDP growth
             fig.add_trace(go.Scatter(
-                x=df_country["Year"],
-                y=df_country["gdp_growth"],
-                mode='lines+markers',
-                name=f"{country}: GDP Growth (%)",
-                line=dict(color="blue"),
-                showlegend=(i == 0)
-            ), row=row_idx, col=1, secondary_y=False)
+            x=df_country["Year"],
+            y=df_country["gdp_growth"],
+            mode='lines',
+            name=f"{country}: GDP Growth (%)",
+            line=dict(color="rgba(0, 102, 204, 1)", width=2),
+            fill="tozeroy",
+            fillcolor="rgba(0, 102, 204, 0.3)",
+            hoverinfo="x+y"
+            ), row=row, col=1, secondary_y=False)
 
             # Female (red)
             fig.add_trace(go.Scatter(
@@ -619,15 +642,26 @@ def render():
             df_country = df_filtered[df_filtered["Country"] == country]
             row_idx = i + 1
 
-            # GDP Growth trace (blue)
+            # # GDP Growth trace (blue)
+            # fig.add_trace(go.Scatter(
+            #     x=df_country["Year"],
+            #     y=df_country["gdp_growth"],
+            #     mode="lines+markers",
+            #     name=f"{country}: GDP Growth (%)",
+            #     line=dict(color="blue"),
+            #     showlegend=(i == 0)
+            # ), row=row_idx, col=1, secondary_y=False)
+            # GDP growth
             fig.add_trace(go.Scatter(
-                x=df_country["Year"],
-                y=df_country["gdp_growth"],
-                mode="lines+markers",
-                name=f"{country}: GDP Growth (%)",
-                line=dict(color="blue"),
-                showlegend=(i == 0)
-            ), row=row_idx, col=1, secondary_y=False)
+            x=df_country["Year"],
+            y=df_country["gdp_growth"],
+            mode='lines',
+            name=f"{country}: GDP Growth (%)",
+            line=dict(color="rgba(0, 102, 204, 1)", width=2),
+            fill="tozeroy",
+            fillcolor="rgba(0, 102, 204, 0.3)",
+            hoverinfo="x+y"
+            ), row=row, col=1, secondary_y=False)
 
             # Initial fertility feature trace (red)
             col = fertility_features[initial_feature_label]
@@ -723,15 +757,27 @@ def render():
             df_country = df_filtered[df_filtered["Country"] == country]
             row_idx = i + 1
 
-            # GDP Growth trace (blue)
+            # # GDP Growth trace (blue)
+            # fig.add_trace(go.Scatter(
+            #     x=df_country["Year"],
+            #     y=df_country["gdp_growth"],
+            #     mode="lines+markers",
+            #     name=f"{country}: GDP Growth (%)",
+            #     line=dict(color="blue"),
+            #     showlegend=(i == 0)
+            #), row=row_idx, col=1, secondary_y=False)
+
+            # GDP growth
             fig.add_trace(go.Scatter(
-                x=df_country["Year"],
-                y=df_country["gdp_growth"],
-                mode="lines+markers",
-                name=f"{country}: GDP Growth (%)",
-                line=dict(color="blue"),
-                showlegend=(i == 0)
-            ), row=row_idx, col=1, secondary_y=False)
+            x=df_country["Year"],
+            y=df_country["gdp_growth"],
+            mode='lines',
+            name=f"{country}: GDP Growth (%)",
+            line=dict(color="rgba(0, 102, 204, 1)", width=2),
+            fill="tozeroy",
+            fillcolor="rgba(0, 102, 204, 0.3)",
+            hoverinfo="x+y"
+            ), row=row, col=1, secondary_y=False)
 
             # Well-being indicator trace (red)
             fig.add_trace(go.Scatter(
