@@ -10,7 +10,9 @@ import seaborn as sns
 import scipy.stats as stats
 import streamlit as st
 import chartDiscription as cd
+
 from dataLoading import loading_preprocessed_data  # Make sure this returns your cleaned DataFrame
+
 
 def create_lag_features(df, target='gdp_growth', lags=3):
     for lag in range(1, lags + 1):
@@ -163,32 +165,6 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=Tr
 
     return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
 
-# --- Example usage with subplots ---
-fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1,
-                    subplot_titles=["India", "Germany"])
-
-india_traces = hybrid_forecast_plotly(df, "India", forecast_horizon=5)
-germany_traces = hybrid_forecast_plotly(df, "Germany", forecast_horizon=5)
-
-for trace in india_traces:
-    fig.add_trace(trace, row=1, col=1)
-for trace in germany_traces:
-    fig.add_trace(trace, row=2, col=1)
-
-fig.update_layout(
-    height=1000,
-    title="GDP Growth Forecasts (India & Germany) with 95% Confidence Intervals",
-    showlegend=True,
-    template="plotly_white",
-    hovermode="x unified",
-    legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
-    margin=dict(l=40, r=40, t=60, b=80)
-)
-fig.update_yaxes(title_text="GDP Growth (%)", row=1, col=1)
-fig.update_yaxes(title_text="GDP Growth (%)", row=2, col=1)
-fig.update_xaxes(title_text="Year", row=2, col=1)
-
-fig.show()
 
 def render():
     df, forecasts = load_data_and_forecasts()
