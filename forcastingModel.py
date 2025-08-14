@@ -56,116 +56,7 @@ def find_best_arima_order(series, p_values=[0,1,2], d_values=[0,1], q_values=[0,
                     continue
     return best_order
 
-# def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=True, arima_order=(1,1,0)):
-#     target = 'gdp_growth'
-#     country_df = df[df["Country"] == country_name].copy()
-#     country_df = country_df.drop(columns=["Country", "gdp_per_capita_growth"], errors="ignore")
-#     country_df = create_lag_features(country_df).dropna().reset_index(drop=True)
-
-#     train = country_df.iloc[:-forecast_horizon]
-#     test = country_df.iloc[-forecast_horizon:]
-#     feature_cols = [col for col in country_df.columns if 'lag' in col or col == 'year_idx']
-#     X_train, y_train = train[feature_cols], train[target]
-#     X_test, y_test = test[feature_cols], test[target]
-
-#     # XGBoost
-#     xgb = XGBRegressor(n_estimators=200, max_depth=3, learning_rate=0.1, random_state=42)
-#     xgb.fit(X_train, y_train)
-#     full_preds_xgb = xgb.predict(country_df[feature_cols])
-
-#     # ARIMA (now uses the passed-in order)
-#     model = ARIMA(train[target], order=arima_order)
-#     best_model = model.fit()
-
-#     arima_preds = best_model.forecast(len(country_df) - len(train))
-#     arima_full_preds = np.concatenate([best_model.fittedvalues, arima_preds])
-#     ensemble_preds = 0.6 * full_preds_xgb + 0.4 * arima_full_preds
-
-#     # Confidence Interval
-#     residuals = train[target] - best_model.fittedvalues
-#     std_resid = residuals.std()
-#     upper_ci = ensemble_preds + 1.96 * std_resid
-#     lower_ci = ensemble_preds - 1.96 * std_resid
-
-#     # Forecast Future
-#     full_df = country_df.copy()
-#     forecast_vals = list(ensemble_preds)
-
-#     for _ in range(forecast_horizon):
-#         year = full_df['Year'].max() + 1
-#         new_row = {'Year': year}
-#         for lag in range(1, 4):
-#             new_row[f'{target}_lag{lag}'] = full_df.iloc[-lag][target]
-#         new_row['year_idx'] = year - df['Year'].min()
-#         X_future = pd.DataFrame([new_row])[feature_cols]
-
-#         xgb_future = xgb.predict(X_future)[0]
-#         arima_future = best_model.forecast(1).iloc[0]
-#         hybrid_future = 0.6 * xgb_future + 0.4 * arima_future
-
-#         new_row[target] = hybrid_future
-#         full_df = pd.concat([full_df, pd.DataFrame([new_row])], ignore_index=True)
-#         forecast_vals.append(hybrid_future)
-#         upper_ci = np.append(upper_ci, hybrid_future + 1.96 * std_resid)
-#         lower_ci = np.append(lower_ci, hybrid_future - 1.96 * std_resid)
-
-#     # Trend Line
-#     trend_df = full_df[full_df['Year'] >= 1995]
-#     z = np.polyfit(trend_df['Year'], trend_df[target], 1)
-#     trend_line = np.polyval(z, full_df['Year'])
-
-#     # Plotly Traces
-#     traces = []
-
-#     traces.append(go.Scatter(
-#         x=country_df['Year'],
-#         y=country_df[target],
-#         name="Actual",
-#         mode='lines+markers',
-#         line=dict(color='white', width=2),
-#         marker=dict(symbol='circle', size=6),
-#         showlegend=show_legend
-#     ))
-
-#     traces.append(go.Scatter(
-#         x=full_df['Year'],
-#         y=forecast_vals,
-#         name="Forecast",
-#         mode='lines+markers',
-#         line=dict(color='crimson', width=3),
-#         marker=dict(symbol='circle', size=6),
-#         showlegend=show_legend
-#     ))
-
-#     traces.append(go.Scatter(
-#         x=full_df['Year'], y=upper_ci,
-#         line=dict(width=0),
-#         showlegend=False
-#     ))
-
-#     traces.append(go.Scatter(
-#         x=full_df['Year'], y=lower_ci,
-#         name="95% Confidence Interval",
-#         fill='tonexty',
-#         fillcolor='rgba(100,149,237,0.3)',
-#         line=dict(width=0),
-#         mode='lines',
-#         hoverinfo='skip',
-#         showlegend=show_legend
-#     ))
-
-#     traces.append(go.Scatter(
-#         x=full_df['Year'],
-#         y=trend_line,
-#         name="Trend Line",
-#         line=dict(color='green', width=2, dash='dash'),
-#         mode='lines',
-#         showlegend=show_legend
-#     ))
-
-#     return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
-
-def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, direct_years=5, show_legend=True, arima_order=(1,1,0)):
+def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=True, arima_order=(1,1,0)):
     target = 'gdp_growth'
     country_df = df[df["Country"] == country_name].copy()
     country_df = country_df.drop(columns=["Country", "gdp_per_capita_growth"], errors="ignore")
@@ -175,48 +66,20 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, direct_years=5
     test = country_df.iloc[-forecast_horizon:]
     feature_cols = [col for col in country_df.columns if 'lag' in col or col == 'year_idx']
     X_train, y_train = train[feature_cols], train[target]
+    X_test, y_test = test[feature_cols], test[target]
 
     # XGBoost
     xgb = XGBRegressor(n_estimators=200, max_depth=3, learning_rate=0.1, random_state=42)
     xgb.fit(X_train, y_train)
     full_preds_xgb = xgb.predict(country_df[feature_cols])
 
-    # ARIMA
+    # ARIMA (now uses the passed-in order)
     model = ARIMA(train[target], order=arima_order)
     best_model = model.fit()
 
-    arima_future = best_model.forecast(steps=forecast_horizon)
-    arima_full_preds = np.concatenate([best_model.fittedvalues, arima_future])
-
-    # Hybrid future forecast
-    temp_data = country_df.copy()
-    future_years = np.arange(country_df['Year'].max() + 1,
-                             country_df['Year'].max() + forecast_horizon + 1)
-    future_preds_xgb = []
-
-    for i, year in enumerate(future_years):
-        new_row = {'Year': year, 'year_idx': year - df['Year'].min()}
-        lag_values = temp_data[target].values[-3:]
-        for lag in range(1, 4):
-            new_row[f'{target}_lag{lag}'] = lag_values[-lag]
-
-        # First `direct_years` use ARIMA lags
-        xgb_pred = xgb.predict(pd.DataFrame([new_row])[feature_cols])[0]
-        if i < direct_years:
-            temp_data = pd.concat([temp_data, pd.DataFrame([{target: arima_future[i]}])], ignore_index=True)
-            hybrid_pred = 0.6 * xgb_pred + 0.4 * arima_future[i]
-        else:
-            temp_data = pd.concat([temp_data, pd.DataFrame([{target: xgb_pred}])], ignore_index=True)
-            hybrid_pred = 0.6 * xgb_pred + 0.4 * arima_future[i]
-
-        future_preds_xgb.append(hybrid_pred)
-
-    # Combine predictions
-    hybrid_future = np.array(future_preds_xgb)
-    ensemble_preds = np.concatenate([
-        0.6 * full_preds_xgb + 0.4 * arima_full_preds[:len(country_df)],
-        hybrid_future
-    ])
+    arima_preds = best_model.forecast(len(country_df) - len(train))
+    arima_full_preds = np.concatenate([best_model.fittedvalues, arima_preds])
+    ensemble_preds = 0.6 * full_preds_xgb + 0.4 * arima_full_preds
 
     # Confidence Interval
     residuals = train[target] - best_model.fittedvalues
@@ -224,48 +87,83 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, direct_years=5
     upper_ci = ensemble_preds + 1.96 * std_resid
     lower_ci = ensemble_preds - 1.96 * std_resid
 
-    # Trend line
-    forecast_years = np.concatenate([country_df['Year'], future_years])
-    trend_df = pd.DataFrame({'Year': forecast_years, target: ensemble_preds})
-    trend_df_hist = trend_df[trend_df['Year'] >= 1995]
-    z = np.polyfit(trend_df_hist['Year'], trend_df_hist[target], 1)
-    trend_line = np.polyval(z, forecast_years)
+    # Forecast Future
+    full_df = country_df.copy()
+    forecast_vals = list(ensemble_preds)
 
-    # Plotly traces
-    traces = [
-        go.Scatter(
-            x=country_df['Year'], y=country_df[target],
-            name="Actual", mode='lines+markers',
-            line=dict(color='white', width=2),
-            marker=dict(symbol='circle', size=6),
-            showlegend=show_legend
-        ),
-        go.Scatter(
-            x=forecast_years, y=ensemble_preds,
-            name="Forecast", mode='lines+markers',
-            line=dict(color='crimson', width=3),
-            marker=dict(symbol='circle', size=6),
-            showlegend=show_legend
-        ),
-        go.Scatter(
-            x=forecast_years, y=upper_ci,
-            line=dict(width=0), showlegend=False
-        ),
-        go.Scatter(
-            x=forecast_years, y=lower_ci,
-            name="95% Confidence Interval", fill='tonexty',
-            fillcolor='rgba(100,149,237,0.3)', line=dict(width=0),
-            mode='lines', hoverinfo='skip', showlegend=show_legend
-        ),
-        go.Scatter(
-            x=forecast_years, y=trend_line,
-            name="Trend Line", line=dict(color='green', width=2, dash='dash'),
-            mode='lines', showlegend=show_legend
-        )
-    ]
+    for _ in range(forecast_horizon):
+        year = full_df['Year'].max() + 1
+        new_row = {'Year': year}
+        for lag in range(1, 4):
+            new_row[f'{target}_lag{lag}'] = full_df.iloc[-lag][target]
+        new_row['year_idx'] = year - df['Year'].min()
+        X_future = pd.DataFrame([new_row])[feature_cols]
 
-    return traces, test[target], ensemble_preds[-forecast_horizon:], residuals, ensemble_preds, pd.DataFrame({'Year': forecast_years, target: ensemble_preds}), upper_ci, lower_ci
+        xgb_future = xgb.predict(X_future)[0]
+        arima_future = best_model.forecast(1).iloc[0]
+        hybrid_future = 0.6 * xgb_future + 0.4 * arima_future
 
+        new_row[target] = hybrid_future
+        full_df = pd.concat([full_df, pd.DataFrame([new_row])], ignore_index=True)
+        forecast_vals.append(hybrid_future)
+        upper_ci = np.append(upper_ci, hybrid_future + 1.96 * std_resid)
+        lower_ci = np.append(lower_ci, hybrid_future - 1.96 * std_resid)
+
+    # Trend Line
+    trend_df = full_df[full_df['Year'] >= 1995]
+    z = np.polyfit(trend_df['Year'], trend_df[target], 1)
+    trend_line = np.polyval(z, full_df['Year'])
+
+    # Plotly Traces
+    traces = []
+
+    traces.append(go.Scatter(
+        x=country_df['Year'],
+        y=country_df[target],
+        name="Actual",
+        mode='lines+markers',
+        line=dict(color='white', width=2),
+        marker=dict(symbol='circle', size=6),
+        showlegend=show_legend
+    ))
+
+    traces.append(go.Scatter(
+        x=full_df['Year'],
+        y=forecast_vals,
+        name="Forecast",
+        mode='lines+markers',
+        line=dict(color='crimson', width=3),
+        marker=dict(symbol='circle', size=6),
+        showlegend=show_legend
+    ))
+
+    traces.append(go.Scatter(
+        x=full_df['Year'], y=upper_ci,
+        line=dict(width=0),
+        showlegend=False
+    ))
+
+    traces.append(go.Scatter(
+        x=full_df['Year'], y=lower_ci,
+        name="95% Confidence Interval",
+        fill='tonexty',
+        fillcolor='rgba(100,149,237,0.3)',
+        line=dict(width=0),
+        mode='lines',
+        hoverinfo='skip',
+        showlegend=show_legend
+    ))
+
+    traces.append(go.Scatter(
+        x=full_df['Year'],
+        y=trend_line,
+        name="Trend Line",
+        line=dict(color='green', width=2, dash='dash'),
+        mode='lines',
+        showlegend=show_legend
+    ))
+
+    return traces, y_test, ensemble_preds[-forecast_horizon:], residuals, forecast_vals, full_df, upper_ci, lower_ci
 
 
 def render():
