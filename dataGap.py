@@ -108,7 +108,7 @@ def render():
             ),
             yaxis=dict(showticklabels=False),
             margin=dict(l=60, r=30, t=80, b=200),
-            width=1200,
+            width=600,
             height=600
         )
 
