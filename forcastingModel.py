@@ -122,7 +122,7 @@ def hybrid_forecast_plotly(df, country_name, forecast_horizon=10, show_legend=Tr
         y=country_df[target],
         name="Actual",
         mode='lines+markers',
-        line=dict(color='white', width=2),
+        line=dict(color='#FFA500', width=2),
         marker=dict(symbol='circle', size=6),
         showlegend=show_legend
     ))
