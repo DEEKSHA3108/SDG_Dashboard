@@ -264,7 +264,7 @@ def render():
         ))
 
         fig.update_layout(
-            height=400,
+            height=450,
             barmode='group',
             title="RMSE & MAE for India and Germany",
             xaxis_title="Country",
