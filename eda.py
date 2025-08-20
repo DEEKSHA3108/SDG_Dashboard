@@ -291,34 +291,7 @@ def render():
         gdp_color = "rgba(255, 90, 95, 0.65)"     # Soft coral
         bar_color = "rgba(70, 130, 180, 0.5)"      # Steel blue (bars behind)
         text_color = "#FFFFFF"
-
-        # for i, country in enumerate(countries):
-        #     df_country = df_filtered[df_filtered["Country"] == country]
-        #     row_idx = i + 1
-
-        #     # Bars first (background)
-        #     fig.add_trace(go.Bar(
-        #         x=df_country["Year"],
-        #         y=df_country[col],
-        #         name=f"{country} - {initial_feature_label}",
-        #         marker=dict(color=bar_color, line=dict(color="rgba(255,255,255,0.05)", width=0.5)),
-        #         opacity=0.6,
-        #         hovertemplate=f"<b>Year:</b> %{{x}}<br><b>{initial_feature_label}:</b> %{{y:.1f}}%",
-        #         showlegend=(i == 0)
-        #     ), row=row_idx, col=1, secondary_y=True)
-
-        #     # GDP area in front (foreground)
-        #     fig.add_trace(go.Scatter(
-        #         x=df_country["Year"],
-        #         y=df_country["gdp_growth"],
-        #         mode='lines',
-        #         name=f"{country} GDP Growth",
-        #         line=dict(color=gdp_color, width=3, shape='spline', smoothing=0.6),
-        #         fill='tozeroy',
-        #         hovertemplate="Year: %{x}<br>GDP Growth: %{y:.2f}%",
-        #         showlegend=(i == 0)
-        #     ), row=row_idx, col=1, secondary_y=False)
-        # Add initial traces
+        
         for i, country in enumerate(countries):
             df_country = df_filtered[df_filtered["Country"] == country]
             row_idx = i + 1
@@ -332,7 +305,7 @@ def render():
                 line=dict(color="rgba(0, 102, 204, 1)", width=2),
                 fill="tozeroy",
                 fillcolor="rgba(0, 102, 204, 0.3)",
-                showlegend=show_legend
+                showlegend=(i == 0)
             ), row=row_idx, col=1, secondary_y=False)
         
             # Initial leadership feature (red, secondary y-axis)
@@ -345,42 +318,6 @@ def render():
                 line=dict(color="red", width=2),
                 showlegend=(i == 0)
             ), row=row_idx, col=1, secondary_y=True)
-
-        # # Layout styling
-        # fig.update_layout(
-        #     height=600,
-        #     title=dict(
-        #         text=f"<b>GDP Growth vs {initial_feature_label}</b> <span style='font-weight:300'>(India & Germany)</span>",
-        #         x=0.5,
-        #         xanchor="center",
-        #         font=dict(size=20)
-        #     ),
-        #     plot_bgcolor="#0e0e0e",
-        #     paper_bgcolor="#0e0e0e",
-        #     font=dict(color=text_color, family="Arial", size=13),
-        #     legend=dict(
-        #         orientation="h",
-        #         yanchor="bottom",
-        #         y=1.05,
-        #         xanchor="left",
-        #         x=0,
-        #         font=dict(size=11),
-        #         bgcolor='rgba(0,0,0,0)'
-        #     ),
-        #     margin=dict(t=80, l=40, r=40, b=50)
-        # )
-
-        # # Axis styling
-        # for row in [1, 2]:
-        #     fig.update_yaxes(title_text="GDP Growth (%)", row=row, col=1,
-        #                     color="rgba(255,90,95,1)", showgrid=True, gridcolor="rgba(255,255,255,0.05)")
-        #     fig.update_yaxes(title_text=initial_feature_label, row=row, col=1, secondary_y=True,
-        #                     color="rgba(70,130,180,1)", showgrid=False)
-        # fig.update_xaxes(title_text="Year", row=2, col=1, color=text_color, showgrid=False)
-
-        # # Display
-        # st.plotly_chart(fig, use_container_width=True)
-        # cd.gdp_vs_leadership_description(initial_feature_label)
 
         fig.update_layout(
             yaxis2=dict(
